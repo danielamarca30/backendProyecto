@@ -252,5 +252,4 @@ export const Salario = sequelize.define('salario_profesor', {
 });
 
 
-
 await sequelize.sync({ force: false });

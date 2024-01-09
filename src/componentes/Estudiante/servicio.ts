@@ -1,8 +1,8 @@
 import { t } from 'elysia';
-import { Rude, Estudiante } from '../../db';
+import { Rude, Estudiante, Curso, sequelize } from '../../db';
 import { nanoid } from 'nanoid';
 export const schemaEstudiante = t.Object({
-    id: t.String(),
+    // id: t.Optional(t.String()),
     cod_rude: t.Union([
         t.String(),
         t.Object({
@@ -72,24 +72,51 @@ export const schemaCurso = t.Object({
 });
 
 const Servicio = {
-    listar: async function (ctx: any) {
+    listarEstudiante: async function () {
         try {
             const response = await Estudiante.findAll();
-            ctx.status = 400;
+            return response;
+        } catch (err) {
+            return err;
+        }
+    },
+    listarRude: async function () {
+        try {
+            const response = await Rude.findAll();
             return response;
         } catch (err) {
             return err;
         }
     },
     crearEstudiante: async function ({ body }) {
-        const value = { ...body };
-        try {
-            value.id = nanoid();
-            const response = await Rude.create(value);
-            return response;
-        } catch (e) {
-            throw new Error(e);
-        }
+        const { id_curso, cod_rude, ...value } = body;
+        let rude, curso;
+        return await sequelize.transaction(async (t) => {
+            try {
+                value.id = nanoid();
+                if (typeof body.cod_rude === 'string') {
+                    rude = await Rude.findOne({ where: { cod_rude: cod_rude }, transaction: t });
+                    if (!rude) throw new Error('RUDE no encontrado');
+                }
+                if (typeof body.cod_rude === 'object') {
+                    rude = await Rude.create(cod_rude, { transaction: t });
+                }
+                if (typeof body.id_curso === 'string') {
+                    curso = await Curso.findOne({ where: { id: id_curso }, transaction: t });
+                    if (!curso) throw new Error('CURSO no encontrado');
+                }
+                if (typeof body.id_curso === 'object') {
+                    curso = await Curso.create({ id: nanoid(), ...id_curso }, { transaction: t });
+                }
+                const estudianteCreado = await Estudiante.create({ ...value, id_curso: curso.dataValues.id, cod_rude: rude.dataValues.cod_rude }, { transaction: t });
+                console.log('estudiante', estudianteCreado.dataValues);
+                return estudianteCreado.dataValues;
+            } catch (e) {
+                throw e;
+            }
+        }).catch(e => {
+            throw new Error(`${e.message}`);
+        });
     },
     crearRude: async function ({ body }) {
         const value = { ...body };

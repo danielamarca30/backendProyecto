@@ -6,10 +6,11 @@ const Controlador = new Elysia().onError(({ code, error, set }) => {
         return error;
     }
 });
-Controlador.get('/', Servicio.listar);
+Controlador.get('/', Servicio.listarEstudiante);
 Controlador.post('/', Servicio.crearEstudiante, {
     body: schemaEstudiante
 })
+Controlador.get('/rude', Servicio.listarRude);
 Controlador.post('/rude', Servicio.crearRude, {
     body: schemaRude,
     response: t.Object({

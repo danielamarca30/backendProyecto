@@ -6,7 +6,7 @@ const server = new Elysia()
     .use(swagger({
         documentation: {
             info: {
-                title: 'Elysia Documentation',
+                title: 'Colegio',
                 version: '1.0.0'
             }
         }
