@@ -63,14 +63,22 @@ export const schemaEstudianteDiscapacidad = t.Object({
     discapacidadTipo: t.String(),
     discapacidadGrado: t.String(),
 });
+enum Nivel {
+    INICIAL = "INICIAL",
+    PRIMARIA = "PRIMARIA",
+    SECUNDARIA = "SECUNDARIA"
+}
+
 export const schemaCurso = t.Object({
-    id: t.String(),
+    id: t.Optional(t.String()),
     curso: t.String(),
-    nivel: t.String(),
+    nivel: t.Enum(Nivel, {
+        description: 'Extract value from path parameter'
+
+    }),
     paralelo: t.String(),
     ano: t.String(),
 });
-
 const Servicio = {
     listarEstudiante: async function () {
         try {
@@ -83,6 +91,14 @@ const Servicio = {
     listarRude: async function () {
         try {
             const response = await Rude.findAll();
+            return response;
+        } catch (err) {
+            return err;
+        }
+    },
+    listarCurso: async function () {
+        try {
+            const response = await Curso.findAll();
             return response;
         } catch (err) {
             return err;
@@ -122,14 +138,28 @@ const Servicio = {
         const value = { ...body };
         try {
             const rudeCreado = await Rude.create(value);
-            // Aquí construyes el objeto de respuesta
             const respuesta = {
-                ...rudeCreado.dataValues, // Suponiendo que esto tiene los campos requeridos
-                updatedAt: new Date().toISOString(), // Asegúrate de que estos valores sean correctos
+                ...rudeCreado.dataValues,
+                updatedAt: new Date().toISOString(),
                 createdAt: new Date().toISOString()
 
             };
             return respuesta;
+        } catch (e) {
+            throw new Error(e);
+        }
+    },
+    crearCurso: async function ({ body }) {
+        const value = { ...body };
+        const cursos = ['1', '2', '3', '4', '5', '6'];
+        const niveles = ['INICIAL', 'PRIMARIA', 'SECUNDARIA'];
+        const paralelos = ['A', 'B', 'C', 'D'];
+        try {
+            value.id = nanoid();
+
+            if (!cursos.includes(value.curso) || !niveles.includes(value.nivel) || !paralelos.includes(value.paralelo)) throw new Error('Error de tipo de datos de (Curso, nivel , paralelo) son incorrectos');
+            const response = await Curso.create(value);
+            return response;
         } catch (e) {
             throw new Error(e);
         }

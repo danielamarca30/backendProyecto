@@ -36,4 +36,7 @@ Controlador.post('/rude', Servicio.crearRude, {
         createdAt: t.String()
     }, { description: 'sample description' })
 });
+Controlador.get('/curso', Servicio.listarCurso);
+Controlador.post('/curso', Servicio.crearCurso, { body: schemaCurso });
+
 export default Controlador;
