@@ -6,10 +6,12 @@ const Controlador = new Elysia().onError(({ code, error, set }) => {
         return error;
     }
 });
+Controlador.get('/:id', Servicio.listarEstudianteID);
 Controlador.get('/', Servicio.listarEstudiante);
 Controlador.post('/', Servicio.crearEstudiante, {
     body: schemaEstudiante
 })
+Controlador.get('/rude/:cod_rude', Servicio.listarRudeId);
 Controlador.get('/rude', Servicio.listarRude);
 Controlador.post('/rude', Servicio.crearRude, {
     body: schemaRude,
@@ -36,6 +38,7 @@ Controlador.post('/rude', Servicio.crearRude, {
         createdAt: t.String()
     }, { description: 'sample description' })
 });
+Controlador.get('/curso/:id', Servicio.listarCursoId);
 Controlador.get('/curso', Servicio.listarCurso);
 Controlador.post('/curso', Servicio.crearCurso, { body: schemaCurso });
 

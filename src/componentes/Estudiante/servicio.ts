@@ -1,49 +1,37 @@
 import { t } from 'elysia';
 import { Rude, Estudiante, Curso, sequelize } from '../../db';
 import { nanoid } from 'nanoid';
-export const schemaEstudiante = t.Object({
-    // id: t.Optional(t.String()),
-    cod_rude: t.Union([
-        t.String(),
-        t.Object({
-            cod_rude: t.String(),
-            nombres: t.Optional(t.String()),
-            apellidoPaterno: t.Optional(t.String()),
-            apellidoMaterno: t.Optional(t.String()),
-            nacimientoPais: t.Optional(t.String()),
-            nacimientoProvincia: t.Optional(t.String()),
-            nacimientoDepto: t.Optional(t.String()),
-            nacimientoLocalidad: t.Optional(t.String()),
-            nacimientoDia: t.Optional(t.Number()),
-            nacimientoMes: t.Optional(t.Number()),
-            nacimientoAno: t.Optional(t.Number()),
-            identificacionNumero: t.Optional(t.Number()),
-            identificacionComplemento: t.Optional(t.String()),
-            identificacionExpedido: t.Optional(t.String()),
-            certificadoNacimientoOficialia: t.Optional(t.String()),
-            certificadoNacimientoLibro: t.Optional(t.String()),
-            certificadoNacimientoFolio: t.Optional(t.String()),
-            sexo: t.Optional(t.String()),
-        })
-    ]),
-    id_curso: t.Union([
-        t.String(),
-        t.Object({
-            id: t.Optional(t.String()),
-            curso: t.Optional(t.String()),
-            nivel: t.Optional(t.String()),
-            paralelo: t.Optional(t.String()),
-            ano: t.Optional(t.String()),
-        })
-    ])
-});
 export const schemaRude = t.Object({
-    cod_rude: t.String(),
-    nombres: t.Optional(t.String()),
-    apellidoPaterno: t.Optional(t.String()),
-    apellidoMaterno: t.Optional(t.String()),
-    nacimientoPais: t.Optional(t.String()),
-    nacimientoProvincia: t.Optional(t.String()),
+    cod_rude: t.String({
+        default: "40640010",
+        description: "Unicamente: codigo-rude",
+        title: "Rude",
+    }),
+    nombres: t.Optional(t.String({
+        default: "Miguel",
+        description: "Unicamente: Nombre",
+        title: "Nombre",
+    })),
+    apellidoPaterno: t.Optional(t.String({
+        default: "Lopez",
+        description: "Unicamente: Apellido Paterno",
+        title: "Apellido Paterno",
+    })),
+    apellidoMaterno: t.Optional(t.String({
+        default: "Mamani",
+        description: "Unicamente: Apellido Materno",
+        title: "Apellido Materno",
+    })),
+    nacimientoPais: t.Optional(t.String({
+        default: "Bolivia",
+        description: "Unicamente: Pais",
+        title: "Pais",
+    })),
+    nacimientoProvincia: t.Optional(t.String({
+        default: "Cercado",
+        description: "Unicamente: Provincia",
+        title: "Provincia",
+    })),
     nacimientoDepto: t.Optional(t.String()),
     nacimientoLocalidad: t.Optional(t.String()),
     nacimientoDia: t.Optional(t.Number()),
@@ -55,30 +43,70 @@ export const schemaRude = t.Object({
     certificadoNacimientoOficialia: t.Optional(t.String()),
     certificadoNacimientoLibro: t.Optional(t.String()),
     certificadoNacimientoFolio: t.Optional(t.String()),
-    sexo: t.Optional(t.String()),
+    sexo: t.Optional(t.String({
+        default: "M",
+        description: "Unicamente: ['F' | 'M']",
+        title: "Sexo",
+    })),
 });
-export const schemaEstudianteDiscapacidad = t.Object({
-    id: t.String(),
-    codigo: t.String(),
-    discapacidadTipo: t.String(),
-    discapacidadGrado: t.String(),
-});
-enum Nivel {
-    INICIAL = "INICIAL",
-    PRIMARIA = "PRIMARIA",
-    SECUNDARIA = "SECUNDARIA"
-}
-
 export const schemaCurso = t.Object({
     id: t.Optional(t.String()),
-    curso: t.String(),
-    nivel: t.Enum(Nivel, {
-        description: 'Extract value from path parameter'
-
+    curso: t.String({
+        default: "1",
+        description: "Unicamente: ['1', '2', '3', '4', '5', '6']",
+        title: "Curso",
     }),
-    paralelo: t.String(),
-    ano: t.String(),
+    nivel: t.String({
+        default: "INICIAL",
+        description: "Unicamente: ['INICIAL', 'PRIMARIA', 'SECUNDARIA']",
+        title: "Nivel",
+    }),
+    paralelo: t.String({
+        default: "A",
+        description: "Unicamente: ['A', 'B', 'B', 'C', 'D']",
+        title: "Nivel",
+    }),
+    ano: t.Number(),
 });
+export const schemaEstudiante = t.Object({
+    cod_rude: t.Union([
+        schemaRude,
+        t.String(),
+    ], {
+        default: {
+            cod_rude: "40640012",
+            nombres: "Pablo",
+            apellidoPaterno: "Bueno",
+            sexo: "M"
+        },
+        description: "Excluyente: cod_rude: String | cod_rude: {nombres,apellidoPaterno,...}: Object",
+        title: "Rude",
+    }),
+    id_curso: t.Union([
+        schemaCurso,
+        t.String(),
+    ], {
+        default: { curso: "1", nivel: "INICIAL", paralelo: "A", ano: 2024 },
+        description: "Excluyente: id_curso: String | id_curso: {curso, nivel, paralelo, ano}: Object",
+        title: "Rude",
+    })
+});
+
+export const schemaEstudianteDiscapacidad = t.Object({
+    id: t.Optional(t.String()),
+    codigo: t.String({
+        default: "AA-2",
+        description: "Codigo de Discapacidad",
+        title: "Codigo",
+    }),
+    discapacidadTipo: t.String({
+        default: "Autismo",
+        description: "Unicamente: ['Psiquica', 'Autismo', 'Sindrome de Down', 'Intelectual', 'Auditivia', 'Fisica-Motora', 'Sordocequera', 'Multiple', 'Visual']",
+        title: "Discapacidad Tipo",
+    }),
+    discapacidadGrado: t.String(),
+});
+
 const Servicio = {
     listarEstudiante: async function () {
         try {
@@ -104,8 +132,46 @@ const Servicio = {
             return err;
         }
     },
+    listarEstudianteID: async function ({ params }) {
+        try {
+            const response = await Estudiante.findOne({
+                where: {
+                    id: params.id
+                }
+            })
+            return response;
+        } catch (e) {
+            throw new Error(e);
+        }
+    },
+    listarRudeId: async function ({ params }) {
+        try {
+            const response = await Rude.findOne({
+                where: {
+                    cod_rude: params.cod_rude
+                }
+            })
+            return response;
+        } catch (e) {
+            throw new Error(e);
+        }
+    },
+    listarCursoId: async function ({ params }) {
+        try {
+            const response = await Curso.findOne({
+                where: {
+                    id: params.id,
+                }
+            });
+            return response;
+
+        } catch (e) {
+            throw new Error(e);
+        }
+    },
     crearEstudiante: async function ({ body }) {
         const { id_curso, cod_rude, ...value } = body;
+        console.log('estudiante', body);
         let rude, curso;
         return await sequelize.transaction(async (t) => {
             try {

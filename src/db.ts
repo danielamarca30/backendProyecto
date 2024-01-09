@@ -47,7 +47,7 @@ export const Rude = sequelize.define('rude', {
     identificacionNumero: DataTypes.INTEGER,
     identificacionComplemento: DataTypes.STRING,
     identificacionExpedido: DataTypes.STRING,
-    sexo: DataTypes.ENUM('Femenino', 'Masculino'),
+    sexo: DataTypes.ENUM('F', 'M'),
 });
 export const EstudianteDiscapacidad = sequelize.define('estudiante_discapacidad', {
     id: {
@@ -73,7 +73,7 @@ export const Curso = sequelize.define('curso', {
     curso: DataTypes.ENUM('1', '2', '3', '4', '5', '6'),
     nivel: DataTypes.ENUM('INICIAL', 'PRIMARIA', 'SECUNDARIA'),
     paralelo: DataTypes.ENUM('A', 'B', 'C', 'D'),
-    ano: DataTypes.STRING
+    ano: DataTypes.FLOAT
 });
 export const MateriaArea = sequelize.define('materia_area', {
     id: {
@@ -252,4 +252,4 @@ export const Salario = sequelize.define('salario_profesor', {
 });
 
 
-await sequelize.sync({ force: false });
+await sequelize.sync({ force: true });
