@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { Rude, Estudiante, Curso, sequelize } from '../../db';
+import { Rude, Estudiante, Curso, sequelize, EstudianteInscripcion, EstudianteDireccion, EstudianteAspectoSocioEconomico, Tutor, EstudiantePago, EstudianteDiscapacidad, MateriaCampo } from '../../db';
 import { schemaCurso } from '../Curso/servicio';
 import { nanoid } from 'nanoid';
 export const schemaRude = t.Object({
@@ -314,6 +314,72 @@ const Servicio = {
                 throw new Error(`Error al modificar curso ${e.nessage}`)
             };
         });
+    },
+    eliminarEstudiante: async function ({ params: { id } }) {
+        if (!id) throw new Error('Falta el ID en el parámetro.');
+
+        return await sequelize.transaction(async (t) => {
+            try {
+                const estudiante = await Estudiante.findByPk(id, { transaction: t });
+                if (!estudiante) throw new Error('Estudiante no encontrado.');
+                const relaciones = [
+                    EstudianteInscripcion,
+                    EstudianteDireccion,
+                    EstudianteAspectoSocioEconomico,
+                    EstudiantePago,
+                    Tutor
+                ];
+                for (const relacion of relaciones) {
+                    await relacion.destroy({ where: { id_estudiante: id }, transaction: t });
+                }
+                await estudiante.destroy({ transaction: t });
+            } catch (e) {
+                throw new Error(`Error al eliminar estudiante ${e.nessage}`)
+            }
+        });
+    },
+    eliminarRude: async function ({ params: { cod_rude } }) {
+        if (!cod_rude) throw new Error('Falta de ID en el parametro');
+        return await sequelize.transaction(async (t) => {
+            try {
+                const rude = await Rude.findByPk(cod_rude);
+                if (!rude) throw new Error('Rude no encontrado');
+                const relaciones = [
+                    EstudianteDiscapacidad,
+                    Estudiante,
+                ];
+                for (const relacion of relaciones) {
+                    await relacion.destroy({ where: { cod_rude: cod_rude }, transaction: t });
+                }
+                await rude.destroy({ transaction: t });
+            } catch (e) {
+                throw new Error(`Error al eliminar rude ${e.nessage}`)
+            }
+        })
+    },
+    eliminarCurso: async function ({ params: { id } }) {
+        if (!id) throw new Error('Falta de ID en el parametro');
+        return await sequelize.transaction(async (t) => {
+            try {
+                const curso = await Curso.findByPk(id);
+                if (!curso) throw new Error('Curso no encontrado');
+                const relaciones = [
+                    MateriaCampo,
+                    Estudiante
+                ];
+                for (const relacion of relaciones) {
+                    await relacion.destroy({
+                        where: {
+                            id_curso: id
+                        },
+                        transaction: t
+                    })
+                }
+                await curso.destroy({ transaction: t });
+            } catch (e) {
+                throw new Error(`Error al eliminar curso ${e.message}`);
+            }
+        })
     }
 
 }

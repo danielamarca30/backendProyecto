@@ -15,6 +15,9 @@ Controlador.post('/', Servicio.crearEstudiante, {
 Controlador.put('/:id', Servicio.modificarEstudiante, {
     body: schemaEstudianteUpdate
 });
+Controlador.delete(':id', Servicio.eliminarEstudiante);
+
+
 
 Controlador.get('/rude/:cod_rude', Servicio.listarRudeId);
 Controlador.get('/rude', Servicio.listarRude);
@@ -44,6 +47,8 @@ Controlador.post('/rude', Servicio.crearRude, {
     }, { description: 'sample description' })
 });
 Controlador.put('/rude/:cod_rude', Servicio.modificarRude, { body: schemaRude });
+Controlador.delete('/rude/:cod_rude', Servicio.eliminarRude);
+
 
 Controlador.get('/curso/:id', Servicio.listarCursoId);
 Controlador.get('/curso', Servicio.listarCurso);
@@ -57,6 +62,6 @@ Controlador.put('/curso/:id', Servicio.modificarCurso,
         body: schemaCurso
     }
 );
-
+Controlador.delete('/curso/:id', Servicio.eliminarCurso);
 export default Controlador;
 

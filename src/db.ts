@@ -178,7 +178,7 @@ export const EstudianteInscripcion = sequelize.define('estudiante_inscripcion', 
     cod_rude: {
         type: DataTypes.STRING,
         references: {
-            model: Estudiante,
+            model: Rude,
             key: 'cod_rude'
         }
     },
