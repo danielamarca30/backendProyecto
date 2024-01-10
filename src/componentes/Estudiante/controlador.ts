@@ -15,7 +15,7 @@ Controlador.post('/', Servicio.crearEstudiante, {
 Controlador.put('/:id', Servicio.modificarEstudiante, {
     body: schemaEstudianteUpdate
 });
-Controlador.delete(':id', Servicio.eliminarEstudiante);
+Controlador.delete('/:id', Servicio.eliminarEstudiante);
 
 
 

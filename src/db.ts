@@ -175,10 +175,10 @@ export const EstudianteInscripcion = sequelize.define('estudiante_inscripcion', 
         type: DataTypes.STRING,
         primaryKey: true
     },
-    cod_rude: {
+    id_estudiante: {
         type: DataTypes.STRING,
         references: {
-            model: Rude,
+            model: Estudiante,
             key: 'cod_rude'
         }
     },
@@ -325,5 +325,48 @@ export const SalarioDescuento = sequelize.define('salario_profesor_descuendo', {
     motivoDescuento: DataTypes.STRING,
 });
 
+
+// relaciones
+Estudiante.hasMany(EstudianteInscripcion, {
+    foreignKey: 'id_estudiante',
+    onDelete: 'CASCADE'
+});
+
+Estudiante.hasMany(EstudianteDireccion, {
+    foreignKey: 'id_estudiante',
+    onDelete: 'CASCADE'
+});
+Estudiante.hasMany(EstudianteAspectoSocioEconomico, {
+    foreignKey: 'id_estudiante',
+    onDelete: 'CASCADE'
+});
+Estudiante.hasMany(EstudiantePago, {
+    foreignKey: 'id_estudiante',
+    onDelete: 'CASCADE'
+});
+Estudiante.hasMany(Tutor, {
+    foreignKey: 'id_estudiante',
+    onDelete: 'CASCADE'
+});
+
+
+Rude.hasMany(Estudiante, {
+    foreignKey: 'cod_rude',
+    onDelete: 'CASCADE'
+});
+Rude.hasMany(EstudianteDiscapacidad, {
+    foreignKey: 'cod_rude',
+    onDelete: 'CASCADE'
+});
+
+
+Curso.hasMany(Estudiante, {
+    foreignKey: 'id_curso',
+    onDelete: 'CASCADE'
+});
+Curso.hasMany(MateriaCampo, {
+    foreignKey: 'id_curso',
+    onDelete: 'CASCADE'
+})
 
 await sequelize.sync({ force: false });

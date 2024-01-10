@@ -229,7 +229,6 @@ const Servicio = {
                     curso = await Curso.create({ id: nanoid(), ...id_curso }, { transaction: t });
                 }
                 const estudianteCreado = await Estudiante.create({ ...value, id_curso: curso.dataValues.id, cod_rude: rude.dataValues.cod_rude }, { transaction: t });
-                console.log('estudiante', estudianteCreado.dataValues);
                 return estudianteCreado.dataValues;
             } catch (e) {
                 throw e;
@@ -321,18 +320,10 @@ const Servicio = {
         return await sequelize.transaction(async (t) => {
             try {
                 const estudiante = await Estudiante.findByPk(id, { transaction: t });
+                console.log('estudiante eliminado', estudiante);
                 if (!estudiante) throw new Error('Estudiante no encontrado.');
-                const relaciones = [
-                    EstudianteInscripcion,
-                    EstudianteDireccion,
-                    EstudianteAspectoSocioEconomico,
-                    EstudiantePago,
-                    Tutor
-                ];
-                for (const relacion of relaciones) {
-                    await relacion.destroy({ where: { id_estudiante: id }, transaction: t });
-                }
                 await estudiante.destroy({ transaction: t });
+                return estudiante;
             } catch (e) {
                 throw new Error(`Error al eliminar estudiante ${e.nessage}`)
             }
@@ -344,13 +335,6 @@ const Servicio = {
             try {
                 const rude = await Rude.findByPk(cod_rude);
                 if (!rude) throw new Error('Rude no encontrado');
-                const relaciones = [
-                    EstudianteDiscapacidad,
-                    Estudiante,
-                ];
-                for (const relacion of relaciones) {
-                    await relacion.destroy({ where: { cod_rude: cod_rude }, transaction: t });
-                }
                 await rude.destroy({ transaction: t });
             } catch (e) {
                 throw new Error(`Error al eliminar rude ${e.nessage}`)
@@ -363,19 +347,8 @@ const Servicio = {
             try {
                 const curso = await Curso.findByPk(id);
                 if (!curso) throw new Error('Curso no encontrado');
-                const relaciones = [
-                    MateriaCampo,
-                    Estudiante
-                ];
-                for (const relacion of relaciones) {
-                    await relacion.destroy({
-                        where: {
-                            id_curso: id
-                        },
-                        transaction: t
-                    })
-                }
                 await curso.destroy({ transaction: t });
+                return curso;
             } catch (e) {
                 throw new Error(`Error al eliminar curso ${e.message}`);
             }
