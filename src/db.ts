@@ -190,6 +190,13 @@ export const UnidadProcedencia = sequelize.define('inscripcion_unidad_procedenci
         type: DataTypes.STRING,
         primaryKey: true
     },
+    id_estudiante_inscripcion: {
+        type: DataTypes.STRING,
+        references: {
+            model: EstudianteInscripcion,
+            key: 'id'
+        }
+    },
     id_unidad_educativa: {
         type: DataTypes.STRING,
         references: {
@@ -197,7 +204,7 @@ export const UnidadProcedencia = sequelize.define('inscripcion_unidad_procedenci
             key: 'cod_sie',
         }
     }
-})
+});
 export const EstudianteDireccion = sequelize.define('estudiante_direccion', {
     id: {
         type: DataTypes.STRING,
@@ -273,8 +280,8 @@ export const EstudiantePago = sequelize.define('estudiante_pago', {
     },
     monto: DataTypes.FLOAT,
     referencia: DataTypes.ENUM('mensualidad', 'matricula'),
-    mes: DataTypes.STRING,
-    gestion: DataTypes.STRING,
+    mes: DataTypes.INTEGER,
+    gestion: DataTypes.INTEGER,
     fecha: DataTypes.DATE
 });
 export const EsudianteDescuento = sequelize.define('estudiante_descuento', {
@@ -369,4 +376,4 @@ Curso.hasMany(MateriaCampo, {
     onDelete: 'CASCADE'
 })
 
-await sequelize.sync({ force: false });
+await sequelize.sync({ force: true });

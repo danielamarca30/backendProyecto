@@ -2,6 +2,183 @@ import { t } from 'elysia';
 import { Rude, Estudiante, Curso, sequelize, EstudianteInscripcion, EstudianteDireccion, EstudianteAspectoSocioEconomico, Tutor, EstudiantePago, EstudianteDiscapacidad, MateriaCampo } from '../../db';
 import { schemaCurso } from '../Curso/servicio';
 import { nanoid } from 'nanoid';
+export const schemaTutor = t.Object({
+    id_persona: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_persona",
+        title: "Id_Persona"
+    })),
+    id_estudiante: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_estudiante",
+        title: "Id_Estudiante"
+    })),
+    parentesco: t.Optional(t.String({
+        default: "padre",
+        description: "Unicamente: ['padre', 'madre', 'tio', 'tia', 'abuelo', 'abuela', 'otro familiar']",
+        title: 'Parentezco'
+    })),
+    idioma: t.Optional(t.String({
+        default: "castellano",
+        description: "Unicamente: ['ingles', 'castellano', 'español', 'aymara', 'quechua']",
+        title: 'Idioma'
+    })),
+    ocupacion: t.Optional(t.String({
+        default: "agricultor",
+        description: "Unicamente: ocupación del tutor",
+        title: 'Ocupación'
+    })),
+    gradoInstruccion: t.Optional(t.String({
+        default: "licenciatura",
+        description: "Unicamente: ['primaria', 'secundaria', 'bachiller', 'licenciatura', 'diplomado', 'especialidad', 'maestria', 'doctorado']",
+        title: 'gradoInstrucción'
+    }))
+});
+export const schemaEstudiantePago = t.Object({
+    id: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id",
+        title: "Id"
+    })),
+    id_estudiante: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_estudiante",
+        title: "Id_estudiante"
+    })),
+    monto: t.Optional(t.Numeric({
+        default: 200.3,
+        description: "Unicamente: Monto en bolivianos",
+        title: 'Monto de Pago'
+    })),
+    referencia: t.Optional(t.String({
+        default: "mensualidad",
+        description: "Unicamente: ['mensualidad','matricula']",
+        title: 'Referencia de pago'
+    })),
+    mes: t.Optional(t.Numeric({
+        default: 1,
+        description: "Unicamente: [1,2,3,4,5,6,7,8,9,10,11,12]",
+        title: 'Mes'
+    })),
+    gestion: t.Optional(t.Numeric({
+        default: 2024,
+        description: "Unicamente: [2023,2024,2025]",
+        title: 'Año'
+    })),
+    fecha: t.Optional(t.Numeric({
+        default: new Date(),
+        description: "Unicamente: Fecha de pago",
+        title: 'Fecha de pago'
+    }))
+});
+export const schemaEstudianteInscripcion = t.Object({
+    id: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id",
+        title: "Id"
+    })),
+    id_estudiante: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_estudiante",
+        title: "Id_estudiante"
+    })),
+    fecha: t.Date({
+        default: new Date(),
+        description: "Unicamente: fecha",
+        title: "fecha Inscripcion"
+    }),
+    descripcion: t.Optional(t.String({
+        default: 'Deudas anteriores gestiones',
+        description: "Unicamente: Texto",
+        title: "Descripcion"
+    }))
+});
+export const schemaEstudianteAspectoSocioEconomico = t.Object({
+    id: t.Optional(t.String({
+        default: "34_456asdfs4",
+        description: "Unicamente: id",
+        title: "Id"
+    })),
+    id_estudiante: t.Optional(t.String({
+        default: "234_456asdfs4",
+        description: "Unicamente: id_estudiante",
+        title: "Id"
+    })),
+    puebloOriginario: t.Optional(t.String({
+        default: "aymara",
+        description: "Unicamente: ['aymara','quechua]",
+        title: "Pueblo Originario"
+    })),
+    idiomas: t.Optional(t.String({
+        default: "ingles,quechua,castellano",
+        description: "Unicamente: Idiomas separados por comas",
+        title: "Idiomas"
+    }))
+});
+export const schemaEstudianteDireccion = t.Object({
+    id: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id",
+        title: "Id"
+    })),
+    id_estudiante: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_estudiante",
+        title: "Id"
+    })),
+    departamento: t.Optional(t.String({
+        default: 'Oruro',
+        description: "Unicamente: Departamento",
+        title: "Departamento"
+    })),
+    provincia: t.Optional(t.String({
+        default: 'Cercado',
+        description: "Unicamente: Provincia",
+        title: "Provincia"
+    })),
+    Municipio: t.Optional(t.String({
+        default: 'Oruro',
+        description: "Unicamente: Municipio",
+        title: "Municipio"
+    })),
+    Localidad: t.Optional(t.String({
+        default: 'Oruro',
+        description: "Unicamente: Localidad",
+        title: "Localidad"
+    })),
+    Zona: t.Optional(t.String({
+        default: 'Norte',
+        description: "Unicamente: Zona",
+        title: "Zona"
+    })),
+    Calle: t.Optional(t.String({
+        default: 'Calle 10, entre B y C',
+        description: "Unicamente: Calle",
+        title: "Calle"
+    })),
+    Vivienda: t.Optional(t.String({
+        default: 'N2',
+        description: "Unicamente: Numero de Vivienda",
+        title: "Vivienda"
+    }))
+});
+export const schemaUnidadProcedencia = t.Object({
+    id: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id",
+        title: "Id"
+    })),
+    id_estudiante_inscripcion: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_estudiante_inscripcion",
+        title: "Id_estudiante_inscripcion"
+    })),
+    id_unidad_educativa: t.Optional(t.String({
+        default: '234_456asdfs4',
+        description: "Unicamente: id_unidad_educativa",
+        title: "Id_unidad_educativa"
+    }))
+});
 export const schemaRude = t.Object({
     cod_rude: t.String({
         default: "40640010",
