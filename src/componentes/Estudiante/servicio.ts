@@ -1,5 +1,6 @@
 import { t } from 'elysia';
 import { Rude, Estudiante, Curso, sequelize } from '../../db';
+import { schemaCurso } from '../Curso/servicio';
 import { nanoid } from 'nanoid';
 export const schemaRude = t.Object({
     cod_rude: t.String({
@@ -32,42 +33,68 @@ export const schemaRude = t.Object({
         description: "Unicamente: Provincia",
         title: "Provincia",
     })),
-    nacimientoDepto: t.Optional(t.String()),
-    nacimientoLocalidad: t.Optional(t.String()),
-    nacimientoDia: t.Optional(t.Number()),
-    nacimientoMes: t.Optional(t.Number()),
-    nacimientoAno: t.Optional(t.Number()),
-    identificacionNumero: t.Optional(t.Number()),
-    identificacionComplemento: t.Optional(t.String()),
-    identificacionExpedido: t.Optional(t.String()),
-    certificadoNacimientoOficialia: t.Optional(t.String()),
-    certificadoNacimientoLibro: t.Optional(t.String()),
-    certificadoNacimientoFolio: t.Optional(t.String()),
+    nacimientoDepto: t.Optional(t.String({
+        default: "Oruro",
+        description: "Unicamente: Departamento",
+        title: "Departamento",
+    })),
+    nacimientoLocalidad: t.Optional(t.String({
+        default: "Oruro",
+        description: "Unicamente: Localidad",
+        title: "Localidad",
+    })),
+    nacimientoDia: t.Optional(t.Number({
+        default: 1,
+        description: "Unicamente: Dia de nacimiento: [1-31]",
+        title: "Dia Nacimiento",
+    })),
+    nacimientoMes: t.Optional(t.Number({
+        default: 1,
+        description: "Unicamente: Mes de nacimiento: [1-12]",
+        title: "Mes Nacimiento",
+    })),
+    nacimientoAno: t.Optional(t.Number({
+        default: 1996,
+        description: "Unicamente: Año de nacimiento: [0-2019]",
+        title: "Año Nacimiento",
+    })),
+    identificacionNumero: t.Optional(t.Number({
+        default: 7278888,
+        description: "Unicamente: Numero de carnet de identidad",
+        title: "Numero Carnet Identidad",
+    })),
+    identificacionComplemento: t.Optional(t.String({
+        default: "ACP",
+        description: "Unicamente: Complemento de carnet de identidad",
+        title: "Complemento de Carnet de Identidad",
+    })),
+    identificacionExpedido: t.Optional(t.String({
+        default: "OR",
+        description: "Unicamente: Lugar de Expedicion",
+        title: "Expedicion",
+    })),
+    certificadoNacimientoOficialia: t.Optional(t.String({
+        default: "003",
+        description: "Unicamente: Oficialia Cert. Nac.",
+        title: "Oficialia",
+    })),
+    certificadoNacimientoLibro: t.Optional(t.String({
+        default: "AS-03",
+        description: "Unicamente: Libro Cert. Nac.",
+        title: "Libro",
+    })),
+    certificadoNacimientoFolio: t.Optional(t.String({
+        default: "023",
+        description: "Unicamente: Folio Cert. Nac.",
+        title: "Folio",
+    })),
     sexo: t.Optional(t.String({
         default: "M",
         description: "Unicamente: ['F' | 'M']",
         title: "Sexo",
     })),
 });
-export const schemaCurso = t.Object({
-    id: t.Optional(t.String()),
-    curso: t.String({
-        default: "1",
-        description: "Unicamente: ['1', '2', '3', '4', '5', '6']",
-        title: "Curso",
-    }),
-    nivel: t.String({
-        default: "INICIAL",
-        description: "Unicamente: ['INICIAL', 'PRIMARIA', 'SECUNDARIA']",
-        title: "Nivel",
-    }),
-    paralelo: t.String({
-        default: "A",
-        description: "Unicamente: ['A', 'B', 'B', 'C', 'D']",
-        title: "Nivel",
-    }),
-    ano: t.Number(),
-});
+
 export const schemaEstudiante = t.Object({
     cod_rude: t.Union([
         schemaRude,
@@ -91,7 +118,18 @@ export const schemaEstudiante = t.Object({
         title: "Rude",
     })
 });
-
+export const schemaEstudianteUpdate = t.Object({
+    cod_rude: t.String({
+        default: "40640012",
+        description: "Excluyente: cod_rude: String",
+        title: "Rude",
+    }),
+    id_curso: t.String({
+        default: "asfgfd32f4g",
+        description: "Excluyente: id_curso: String",
+        title: "Rude",
+    }),
+});
 export const schemaEstudianteDiscapacidad = t.Object({
     id: t.Optional(t.String()),
     codigo: t.String({
@@ -229,6 +267,53 @@ const Servicio = {
         } catch (e) {
             throw new Error(e);
         }
+    },
+    modificarEstudiante: async function ({ params: { id }, body }) {
+        if (!id) throw new Error('Falta el ID en el parámetro.');
+        return await sequelize.transaction(async (t) => {
+            try {
+                const estudiante = await Estudiante.findByPk(id, { transaction: t });
+                if (!estudiante) throw new Error('Estudiante no encontrado.');
+                if (body.id_curso) {
+                    const curso = await Curso.findByPk(body.id_curso, { transaction: t });
+                    if (!curso) throw new Error('Curso no encontrado.');
+                }
+                if (body.cod_rude) {
+                    const rude = await Rude.findOne({ where: { cod_rude: body.cod_rude }, transaction: t });
+                    if (!rude) throw new Error('RUDE no encontrado.');
+                }
+                await estudiante.update(body, { transaction: t });
+                return estudiante;
+            } catch (e) {
+                throw new Error(`Error al modificar estudiante: ${e.message}`);
+            }
+        });
+    },
+    modificarRude: async function ({ params: { cod_rude }, body }) {
+        if (!cod_rude) throw new Error('Falta el ID en el parametro.');
+        return await sequelize.transaction(async (t) => {
+            try {
+                const rude = await Rude.findByPk(cod_rude);
+                if (!rude) throw new Error('Rude no encontrado.');
+                await rude.update(body, { transaction: t });
+                return rude;
+            } catch (e) {
+                throw new Error(`Error al modificar estudiante: ${e.message}`);
+            }
+        })
+    },
+    modificarCurso: async function ({ params: { id }, body }) {
+        if (!id) throw new Error('Falta de ID en el parametro');
+        return await sequelize.transaction(async (t) => {
+            try {
+                const curso = await Curso.findByPk(id);
+                if (!curso) throw new Error('Curso no encontrado');
+                await curso.update(body, { transaction: t });
+                return curso;
+            } catch (e) {
+                throw new Error(`Error al modificar curso ${e.nessage}`)
+            };
+        });
     }
 
 }

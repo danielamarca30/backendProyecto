@@ -22,7 +22,13 @@ export const UnidadEducativa = sequelize.define('unidad_educativa', {
         primaryKey: true
     },
     nombre: DataTypes.STRING,
+    tipo: DataTypes.ENUM('PRIVADO', 'FISCAL', 'CONVENIO'),
+    pais: DataTypes.STRING,
+    departamento: DataTypes.STRING,
+    localidad: DataTypes.STRING,
+    distrito: DataTypes.STRING,
     direccion: DataTypes.STRING,
+    telefono: DataTypes.STRING,
     nit: DataTypes.STRING
 });
 export const Rude = sequelize.define('rude', {
@@ -75,19 +81,73 @@ export const Curso = sequelize.define('curso', {
     paralelo: DataTypes.ENUM('A', 'B', 'C', 'D'),
     ano: DataTypes.FLOAT
 });
-export const MateriaArea = sequelize.define('materia_area', {
+export const MateriaCampo = sequelize.define('materia_campo', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true
+    },
+    id_curso: {
+        type: DataTypes.STRING,
+        references: {
+            model: Curso,
+            key: 'id'
+        }
     },
     area: DataTypes.STRING,
-})
-export const MateriaDetalle = sequelize.define('materia_detalle', {
+    ano: DataTypes.INTEGER
+});
+export const Persona = sequelize.define('persona', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true
     },
+    ci: DataTypes.STRING,
     nombre: DataTypes.STRING,
+    apellidoPaterno: DataTypes.STRING,
+    apellidoMaterno: DataTypes.STRING,
+    nombreCompleto: DataTypes.STRING,
+    sexo: DataTypes.ENUM('M', 'F'),
+    fechaNac: DataTypes.DATE,
+    telefono: DataTypes.STRING,
+    email: DataTypes.STRING,
+    direccion: DataTypes.STRING
+});
+export const Profesor = sequelize.define('profesor', {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
+    rda: DataTypes.STRING,
+    profesion: DataTypes.STRING,
+    id_persona: {
+        type: DataTypes.STRING,
+        references: {
+            model: Persona,
+            key: 'id'
+        }
+    }
+});
+export const MateriaArea = sequelize.define('materia_detalle', {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
+    id_campo: {
+        type: DataTypes.STRING,
+        references: {
+            model: MateriaCampo,
+            key: 'id'
+        }
+    },
+    id_profesor: {
+        type: DataTypes.STRING,
+        references: {
+            model: Profesor,
+            key: 'id'
+        }
+    },
+    nombre: DataTypes.STRING,
+    ano: DataTypes.INTEGER
 })
 export const Estudiante = sequelize.define('estudiante', {
     id: {
@@ -109,6 +169,35 @@ export const Estudiante = sequelize.define('estudiante', {
         }
     }
 });
+
+export const EstudianteInscripcion = sequelize.define('estudiante_inscripcion', {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
+    cod_rude: {
+        type: DataTypes.STRING,
+        references: {
+            model: Estudiante,
+            key: 'cod_rude'
+        }
+    },
+    fecha: DataTypes.DATE,
+    descripcion: DataTypes.STRING
+});
+export const UnidadProcedencia = sequelize.define('inscripcion_unidad_procedencia', {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
+    id_unidad_educativa: {
+        type: DataTypes.STRING,
+        references: {
+            model: UnidadEducativa,
+            key: 'cod_sie',
+        }
+    }
+})
 export const EstudianteDireccion = sequelize.define('estudiante_direccion', {
     id: {
         type: DataTypes.STRING,
@@ -145,22 +234,7 @@ export const EstudianteAspectoSocioEconomico = sequelize.define('estudiante_aspe
     idiomas: DataTypes.STRING
 });
 
-export const Persona = sequelize.define('persona', {
-    id: {
-        type: DataTypes.STRING,
-        primaryKey: true
-    },
-    ci: DataTypes.STRING,
-    nombre: DataTypes.STRING,
-    apellidoPaterno: DataTypes.STRING,
-    apellidoMaterno: DataTypes.STRING,
-    nombreCompleto: DataTypes.STRING,
-    sexo: DataTypes.ENUM('M', 'F'),
-    fechaNac: DataTypes.DATE,
-    telefono: DataTypes.STRING,
-    email: DataTypes.STRING,
-    direccion: DataTypes.STRING
-});
+
 export const Tutor = sequelize.define('tutor', {
     id: {
         type: DataTypes.STRING,
@@ -203,7 +277,7 @@ export const EstudiantePago = sequelize.define('estudiante_pago', {
     gestion: DataTypes.STRING,
     fecha: DataTypes.DATE
 });
-export const DescuentoPago = sequelize.define('pago_descuento', {
+export const EsudianteDescuento = sequelize.define('estudiante_descuento', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true
@@ -218,23 +292,9 @@ export const DescuentoPago = sequelize.define('pago_descuento', {
     tipoDescuento: DataTypes.ENUM('tercerHermano', 'estudio'),
     monto: DataTypes.FLOAT
 });
-export const Profesor = sequelize.define('profesor', {
-    id: {
-        type: DataTypes.STRING,
-        primaryKey: true
-    },
-    rda: DataTypes.STRING,
-    profesion: DataTypes.STRING,
-    id_persona: {
-        type: DataTypes.STRING,
-        references: {
-            model: Persona,
-            key: 'id'
-        }
-    }
-});
 
-export const Salario = sequelize.define('salario_profesor', {
+
+export const SalarioProfesor = sequelize.define('salario_profesor', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true
@@ -247,9 +307,23 @@ export const Salario = sequelize.define('salario_profesor', {
         }
     },
     monto: DataTypes.FLOAT,
-    descuento: DataTypes.FLOAT,
-    descuentoMotivo: DataTypes.STRING,
+
+});
+export const SalarioDescuento = sequelize.define('salario_profesor_descuendo', {
+    id: {
+        type: DataTypes.STRING,
+        primaryKey: true
+    },
+    id_salario_profesor: {
+        type: DataTypes.STRING,
+        references: {
+            model: SalarioProfesor,
+            key: 'id'
+        }
+    },
+    monto: DataTypes.FLOAT,
+    motivoDescuento: DataTypes.STRING,
 });
 
 
-await sequelize.sync({ force: true });
+await sequelize.sync({ force: false });

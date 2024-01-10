@@ -1,5 +1,6 @@
 import { Elysia, t } from 'elysia';
-import Servicio, { schemaEstudiante, schemaEstudianteDiscapacidad, schemaCurso, schemaRude } from './servicio';
+import { schemaCurso } from '../Curso/servicio';
+import Servicio, { schemaEstudiante, schemaEstudianteDiscapacidad, schemaEstudianteUpdate, schemaRude } from './servicio';
 const Controlador = new Elysia().onError(({ code, error, set }) => {
     if (code) {
         set.status = 400;
@@ -11,6 +12,10 @@ Controlador.get('/', Servicio.listarEstudiante);
 Controlador.post('/', Servicio.crearEstudiante, {
     body: schemaEstudiante
 })
+Controlador.put('/:id', Servicio.modificarEstudiante, {
+    body: schemaEstudianteUpdate
+});
+
 Controlador.get('/rude/:cod_rude', Servicio.listarRudeId);
 Controlador.get('/rude', Servicio.listarRude);
 Controlador.post('/rude', Servicio.crearRude, {
@@ -38,8 +43,20 @@ Controlador.post('/rude', Servicio.crearRude, {
         createdAt: t.String()
     }, { description: 'sample description' })
 });
+Controlador.put('/rude/:cod_rude', Servicio.modificarRude, { body: schemaRude });
+
 Controlador.get('/curso/:id', Servicio.listarCursoId);
 Controlador.get('/curso', Servicio.listarCurso);
-Controlador.post('/curso', Servicio.crearCurso, { body: schemaCurso });
+Controlador.post('/curso', Servicio.crearCurso,
+    {
+        body: schemaCurso
+    }
+);
+Controlador.put('/curso/:id', Servicio.modificarCurso,
+    {
+        body: schemaCurso
+    }
+);
 
 export default Controlador;
+
