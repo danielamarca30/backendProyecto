@@ -23,6 +23,7 @@ export const schemaCurso = t.Object({
         title: "Año",
     }),
 });
+
 export const schemaMateriaArea = t.Object({
 
 });

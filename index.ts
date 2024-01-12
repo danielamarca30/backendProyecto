@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import rutas from './src/rutas';
-import { swagger } from '@elysiajs/swagger'
+import { swagger } from '@elysiajs/swagger';
 
 const server = new Elysia()
     .use(swagger({

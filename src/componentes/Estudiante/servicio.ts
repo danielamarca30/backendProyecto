@@ -386,7 +386,6 @@ const Servicio = {
     },
     crearEstudiante: async function ({ body }) {
         const { id_curso, cod_rude, ...value } = body;
-        console.log('estudiante', body);
         let rude, curso;
         return await sequelize.transaction(async (t) => {
             try {
@@ -497,7 +496,6 @@ const Servicio = {
         return await sequelize.transaction(async (t) => {
             try {
                 const estudiante = await Estudiante.findByPk(id, { transaction: t });
-                console.log('estudiante eliminado', estudiante);
                 if (!estudiante) throw new Error('Estudiante no encontrado.');
                 await estudiante.destroy({ transaction: t });
                 return estudiante;
