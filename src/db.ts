@@ -119,6 +119,7 @@ export const Profesor = sequelize.define('profesor', {
     },
     rda: DataTypes.STRING,
     profesion: DataTypes.STRING,
+    institucionEgreso: DataTypes.STRING,
     id_persona: {
         type: DataTypes.STRING,
         references: {
